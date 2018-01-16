@@ -1,0 +1,573 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="전호진 블로그">
+    <title>git 간단 개념과 설치 방법 - 전호진 블로그</title>
+    <meta name="author" content="Hojin Jun">
+    
+    
+        <link rel="icon" href="https://crynut84.github.io/assets/images/favicon.ico">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="이전 포스팅에서 분산 버전 관리 시스템의 개념을 살펴보았으니, 대표적인  분산 버전 관리 시스템인 git에 대해 알아보려 한다. git 공식 사이트 메인페이지에 보면 git을 아래와 같이 소개한다.  Git is easy to learn and has a tiny footprint with lightning fast performance. It outcla">
+<meta name="keywords" content="git">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="git 간단 개념과 설치 방법">
+<meta property="og:url" content="https://crynut84.github.io/2015/06/16/install-git/index.html">
+<meta property="og:site_name" content="전호진 블로그">
+<meta property="og:description" content="이전 포스팅에서 분산 버전 관리 시스템의 개념을 살펴보았으니, 대표적인  분산 버전 관리 시스템인 git에 대해 알아보려 한다. git 공식 사이트 메인페이지에 보면 git을 아래와 같이 소개한다.  Git is easy to learn and has a tiny footprint with lightning fast performance. It outcla">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://git-scm.com/images/about/workflow-b@2x.png">
+<meta property="og:image" content="https://git-scm.com/images/about/index1@2x.png">
+<meta property="og:image" content="https://crynut84.github.io/images/posts/install-git/git-version.png">
+<meta property="og:updated_time" content="2018-01-09T23:49:57.049Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="git 간단 개념과 설치 방법">
+<meta name="twitter:description" content="이전 포스팅에서 분산 버전 관리 시스템의 개념을 살펴보았으니, 대표적인  분산 버전 관리 시스템인 git에 대해 알아보려 한다. git 공식 사이트 메인페이지에 보면 git을 아래와 같이 소개한다.  Git is easy to learn and has a tiny footprint with lightning fast performance. It outcla">
+<meta name="twitter:image" content="https://git-scm.com/images/about/workflow-b@2x.png">
+<meta name="twitter:creator" content="@crynut84">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/3b2b21d1b33d50542a9c5642c6b5d64d?s=640"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/font-awesome.css">
+    <link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-63739974-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+        
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">전호진 블로그</a>
+    </div>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+            <img class="header-picture" src="https://www.gravatar.com/avatar/3b2b21d1b33d50542a9c5642c6b5d64d?s=90" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/3b2b21d1b33d50542a9c5642c6b5d64d?s=110" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Hojin Jun</h4>
+                
+                    <h5 class="sidebar-profile-bio"></h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/crynut84" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.facebook.com/hojin.jun" target="_blank" rel="noopener" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            git 간단 개념과 설치 방법
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2015-06-16T08:46:53+09:00">
+	
+		    2015-06-16
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/git/">git</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>이전 포스팅에서 <a href="https://crynut84.github.io/2015-06-10/introduction-to-git.html">분산 버전 관리 시스템의 개념</a>을 살펴보았으니, 대표적인  분산 버전 관리 시스템인 git에 대해 알아보려 한다.</p>
+<p>git <a href="http://git-scm.com" target="_blank" rel="noopener">공식 사이트</a> 메인페이지에 보면 git을 아래와 같이 소개한다.</p>
+<blockquote>
+<p><strong><em>Git is easy to learn</em></strong> and has a tiny footprint with lightning fast performance. It outclasses SCM tools like Subversion, CVS, Perforce, and ClearCase with features like cheap local branching, convenient staging areas, and multiple workflows.</p>
+</blockquote>
+<p>배우기 쉽다는 것인데, 내가 처음 git을 배울 때는 다음과 같은 이유로 git이 무지 어려웠다.</p>
+<ul>
+<li>.NET을 주 언어로 사용하는 개발자로 윈도우의 GUI 환경에 익숙하다.<ul>
+<li>git GUI 환경이 있기는 하지만 결국 CLI을 알아야 한다.</li>
+</ul>
+</li>
+<li>기존에 사용하던 버전 관리 시스템(TFS, SVN등)의 개념으로 이해하려 했다.<ul>
+<li>git을 배우려면 기존의 생각을 버리는게 더 빠르다.</li>
+</ul>
+</li>
+<li>git과 <a href="https://github.com/" target="_blank" rel="noopener">github</a>의 개념을 혼동.<ul>
+<li>github는 git 기반의 온라인 소스 관리 서비스이다.</li>
+<li>많은 자료에서 git과 github를 함께 설명하다 보니 해깔렸다.</li>
+</ul>
+</li>
+</ul>
+<p>그래서 나는 순수(?) git을 기능을 먼저 알아보려고 한다.</p>
+<h2 id="git-소개"><a href="#git-소개" class="headerlink" title="git 소개"></a>git 소개</h2><p>git은 <a href="http://git-scm.com" target="_blank" rel="noopener">공식 사이트</a>에 document가 굉장히 잘 만들어져 있다. 요즘 오픈소스는 대부분 document에 공을 들이는 것 같다. 고마운 분들이 번역해 놓은 <a href="http://git-scm.com/book/ko/v2" target="_blank" rel="noopener">한글판</a>도 있다. 덕분에 특별히 책을 구입하지 않아도 배울 수 있다.</p>
+<p><a href="http://git-scm.com/about" target="_blank" rel="noopener">About 페이지</a>에가보면 다음의 6가지 주제로 git을 소개하고 있다. 이 개념들이 기존 버전관리 시스템과 다른점이고 git을 사용하면서 얻을 수 있는 이점이다.</p>
+<ul>
+<li>Branching and Merging</li>
+<li>Small and Fast</li>
+<li>Distributed</li>
+<li>Data Assurance</li>
+<li>Staging Area</li>
+<li>Free and Open Source</li>
+</ul>
+<h3 id="Branching-and-Merging"><a href="#Branching-and-Merging" class="headerlink" title="Branching and Merging"></a>Branching and Merging</h3><p>git은 branch를 만드는데 부담이 없다. 그렇기 때문에 작은 단위의 기능으로 새 branch를 만들고 거기에 원하는 기능을 개발하거나, 실험하고 싶었던 기능을 실험 할 수 있다.  실험에 실패한다면? 그냥 branch를 버리는것으로 끝난다. 아무런 사이드 이펙트가 없다. 나는 TFS를 이용할 때 Branch를 만들때마다 부담스러웠다. 만드는 속도, 용량등 자주 만들기에는 너무 큰 부담이었고(덕분에 회사에 품의를 올려 256G SSD를 추가 구매 할 수 있었지만..) git을 사용하면 이런 고민을 조금은 덜 수 있다.</p>
+<p>git은 branch를 만들어 구현하고, 구현한것을 commit 하고, 때때로 원래 branch로 돌아가 심각한 버그에대한 hotpatch를 만들 수 있다.</p>
+<h3 id="Small-and-Fast"><a href="#Small-and-Fast" class="headerlink" title="Small and Fast"></a>Small and Fast</h3><p>branch를 만들고 merge하는 것이 부담스럽다면, 위와같은 작업을 할 수 없을 것이다. git은 거의 모든 작업을 local repository에서 수행하기 때문에 속도가 빠르다. 심지어 branch를 만들때도 remote server가 없어도 된다. 나중에 설명 하겠지만 git의 branch는 commit을 가르키는 포인터일 뿐이고, 그렇기 때문에 branch를 만드는 것 또한 빠르고 작은 용량으로 가능하다.</p>
+<h3 id="Distributed"><a href="#Distributed" class="headerlink" title="Distributed"></a>Distributed</h3><p>분산 저장소는, 모든 사용자들이 온전한 git repository를 가진다는 의미이다. 내가 진행중인 프로젝트를 git을 이용하여 내려받는다면, 나는 remote repository와 동일한 repository를 내 local에 가져오게 된다. 이말을 바꿔말하면 단지 repository를 가져오는 것만으로 source, commit hitsotry등 모든 요소를 가져오게 된다는 말인다. 최악의 경우 remote server의 장애로 모든 데이터를 날렸다고 하더라도, 다른 사용자의 repository를 이용해 복원 할 수 있다는 말인다.</p>
+<p>그리고, 개발자들은 각자의 repository에서 작업하고(네트워크 없이) 작업이 끝난경우 remote repository로 push하여 개발 할 수 있고, git을 활용하여 업무의 workflow를 유연하게 적용 할 수 있다.<br><img src="https://git-scm.com/images/about/workflow-b@2x.png" alt="Integration Manager Workflow"><br>출처 : <a href="https://git-scm.com/images/about/workflow-b@2x.png" target="_blank" rel="noopener">https://git-scm.com/images/about/workflow-b@2x.png</a></p>
+<h3 id="Data-Assurance"><a href="#Data-Assurance" class="headerlink" title="Data Assurance"></a>Data Assurance</h3><p>git은 관리하는 모든 파일을 암호화하여 보관하고, 체크썸을 이용하여 파일의 유효성을 보장한다. 그리고 각 commit에는 commit 아이디가 부여되여 관리 되기 때문에 hitory 관리에도 유용하게 적용 할 수 있다.</p>
+<h3 id="Staging-Area"><a href="#Staging-Area" class="headerlink" title="Staging Area"></a>Staging Area</h3><p>처음 git을 접하면 어렵게 느껴지는 부분인데 git에는 다른 VCS에는 없는 <code>staging area</code>가 있다.(index라고도 부름)<br><img src="https://git-scm.com/images/about/index1@2x.png" alt="Git staging area"><br>출처 : <a href="https://git-scm.com/images/about/index1@2x.png" target="_blank" rel="noopener">https://git-scm.com/images/about/index1@2x.png</a></p>
+<p>파일들은 working directory에 있다. 이 상태에서 a.txt파일을 수정하면 파일의 상태가 modified로 바뀌고, 예상하는 바와같이 commit을 하면 a.txt가 commit 될 것처럼 보인다. 하지만 git에서는 이렇게 동작하지 않는다. modiried 상태인 a.txt파일을 staging area로 등록해야만 commit에 포함된다. 즉 git은 stating area의 스냅샷을 commit으로 기록하는 것이다.</p>
+<h3 id="Free-and-Open-Source"><a href="#Free-and-Open-Source" class="headerlink" title="Free and Open Source"></a>Free and Open Source</h3><p>git은 <a href="http://opensource.org/licenses/GPL-2.0" target="_blank" rel="noopener">GNU General Public License version 2.0</a> 라이선스 정책을 따르고 있으며, 모든 사용자에게 무료로 제공된다. 주의할 점은 git의 <a href="http://git-scm.com/downloads/logos" target="_blank" rel="noopener">로고</a>는 다른 <a href="http://git-scm.com/trademark" target="_blank" rel="noopener">라이선스 정책</a>을 따른다는 것이다.</p>
+<h2 id="git-설치"><a href="#git-설치" class="headerlink" title="git 설치"></a>git 설치</h2><p>git을 설치하는데는 큰 어려움이 없다. Linux와 Mac OS X, Windows의 버전이 조금씩 다른데, <a href="http://git-scm.com/downloads" target="_blank" rel="noopener">Downloads</a> 페이지에서 각 OS별 download를 제공한다.</p>
+<h3 id="Windows에-설치"><a href="#Windows에-설치" class="headerlink" title="Windows에 설치"></a>Windows에 설치</h3><p>Windows의 경우 download 페이지에 가면 설치파일이 제공된다. 다운로드받아 설치하는것으로 쉽게 가능하다. 설치 후 git bash를 이용하여 사용하면 된다.</p>
+<h3 id="Linux에-설치"><a href="#Linux에-설치" class="headerlink" title="Linux에 설치"></a>Linux에 설치</h3><p>Ubuntu의 경우 apt-get(pakage manager)를 이용하여 쉽게 설치할 수 있다.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ apt-get install git</span><br></pre></td></tr></table></figure></p>
+<h3 id="Mac에-설치"><a href="#Mac에-설치" class="headerlink" title="Mac에 설치"></a>Mac에 설치</h3><p>Mac의 경우에도 download 페이지에서 installer를 제공하기 때문에 손쉽게 설치 가능하다.</p>
+<p>어떤 OS든 git 설치가 되었는지 확인하려면 git의 버전을 보는 명령어를 실행하여 현재 git의 버전을 확인할 수 있다.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git --version</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://crynut84.github.io/images/posts/install-git/git-version.png" alt="git version"></p>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/git/">git</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/06/19/basic-command-git/" data-tooltip="git 기초 명령어" aria-label="PREVIOUS: git 기초 명령어">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/06/10/introduction-to-git/" data-tooltip="분산 버전 관리 시스템 git 소개" aria-label="NEXT: 분산 버전 관리 시스템 git 소개">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://crynut84.github.io/2015/06/16/install-git/" title="Share on Facebook">
+                    <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://crynut84.github.io/2015/06/16/install-git/" title="Share on Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://crynut84.github.io/2015/06/16/install-git/" title="Share on Google+">
+                    <i class="fa fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 Hojin Jun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/06/19/basic-command-git/" data-tooltip="git 기초 명령어" aria-label="PREVIOUS: git 기초 명령어">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/06/10/introduction-to-git/" data-tooltip="분산 버전 관리 시스템 git 소개" aria-label="NEXT: 분산 버전 관리 시스템 git 소개">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://crynut84.github.io/2015/06/16/install-git/" title="Share on Facebook">
+                    <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://crynut84.github.io/2015/06/16/install-git/" title="Share on Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://crynut84.github.io/2015/06/16/install-git/" title="Share on Google+">
+                    <i class="fa fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://crynut84.github.io/2015/06/16/install-git/">
+                    <i class="fa fa-facebook-official" aria-hidden="true"></i><span>Share on Facebook</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://crynut84.github.io/2015/06/16/install-git/">
+                    <i class="fa fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://crynut84.github.io/2015/06/16/install-git/">
+                    <i class="fa fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/3b2b21d1b33d50542a9c5642c6b5d64d?s=110" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Hojin Jun</h4>
+        
+            <div id="about-card-bio"></div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>programmer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/jquery.fancybox.js"></script>
+<script src="/assets/js/thumbs.js"></script>
+<script src="/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'https://crynut84.github.io/2015/06/16/install-git/';
+                 
+                    this.page.identifier = '2015/06/16/install-git/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'hojinjunblog';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    </body>
+</html>

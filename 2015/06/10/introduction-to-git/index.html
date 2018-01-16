@@ -1,0 +1,576 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="전호진 블로그">
+    <title>분산 버전 관리 시스템 git 소개 - 전호진 블로그</title>
+    <meta name="author" content="Hojin Jun">
+    
+    
+        <link rel="icon" href="https://crynut84.github.io/assets/images/favicon.ico">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="2010년 대학교 졸업 후 취업 할 생각은 안하고 빈둥거리고 있을 때, 지인의 소개로 모 회사의 SI 프로젝트에 프리랜서 자격으로 참여 할 수 있었다.  프리랜서이지만 나름 첫 출근날, 상콤한 마음으로 프로젝트 장소에 도착하여 간략하게 개발업무에 대한 설명을 듣고, 개발환경을 구축하려는 그때부터 나는 멘붕에 빠져버렸다. 사실 대학교 막 졸업한 내가 제대로">
+<meta name="keywords" content="git,버전관리">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="분산 버전 관리 시스템 git 소개">
+<meta property="og:url" content="https://crynut84.github.io/2015/06/10/introduction-to-git/index.html">
+<meta property="og:site_name" content="전호진 블로그">
+<meta property="og:description" content="2010년 대학교 졸업 후 취업 할 생각은 안하고 빈둥거리고 있을 때, 지인의 소개로 모 회사의 SI 프로젝트에 프리랜서 자격으로 참여 할 수 있었다.  프리랜서이지만 나름 첫 출근날, 상콤한 마음으로 프로젝트 장소에 도착하여 간략하게 개발업무에 대한 설명을 듣고, 개발환경을 구축하려는 그때부터 나는 멘붕에 빠져버렸다. 사실 대학교 막 졸업한 내가 제대로">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://crynut84.github.io/images/posts/introduction-to-git/centralized-version-control.png">
+<meta property="og:updated_time" content="2018-01-09T23:45:08.771Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="분산 버전 관리 시스템 git 소개">
+<meta name="twitter:description" content="2010년 대학교 졸업 후 취업 할 생각은 안하고 빈둥거리고 있을 때, 지인의 소개로 모 회사의 SI 프로젝트에 프리랜서 자격으로 참여 할 수 있었다.  프리랜서이지만 나름 첫 출근날, 상콤한 마음으로 프로젝트 장소에 도착하여 간략하게 개발업무에 대한 설명을 듣고, 개발환경을 구축하려는 그때부터 나는 멘붕에 빠져버렸다. 사실 대학교 막 졸업한 내가 제대로">
+<meta name="twitter:image" content="https://crynut84.github.io/images/posts/introduction-to-git/centralized-version-control.png">
+<meta name="twitter:creator" content="@crynut84">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/3b2b21d1b33d50542a9c5642c6b5d64d?s=640"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/font-awesome.css">
+    <link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-63739974-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+        
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">전호진 블로그</a>
+    </div>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+            <img class="header-picture" src="https://www.gravatar.com/avatar/3b2b21d1b33d50542a9c5642c6b5d64d?s=90" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/3b2b21d1b33d50542a9c5642c6b5d64d?s=110" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Hojin Jun</h4>
+                
+                    <h5 class="sidebar-profile-bio"></h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/crynut84" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.facebook.com/hojin.jun" target="_blank" rel="noopener" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            분산 버전 관리 시스템 git 소개
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2015-06-10T08:40:44+09:00">
+	
+		    2015-06-10
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/git/">git</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>2010년 대학교 졸업 후 취업 할 생각은 안하고 빈둥거리고 있을 때, 지인의 소개로 모 회사의 SI 프로젝트에 프리랜서 자격으로 참여 할 수 있었다. </p>
+<p>프리랜서이지만 나름 첫 출근날, 상콤한 마음으로 프로젝트 장소에 도착하여 간략하게 개발업무에 대한 설명을 듣고, 개발환경을 구축하려는 그때부터 나는 멘붕에 빠져버렸다.</p>
+<p>사실 대학교 막 졸업한 내가 제대로 할 줄 아는것이 무었이 있었겠는가? 그냥 다 할 줄 안다고 패기있게 참여한 프로젝트였지만 첫 시작부터 예상치 못한 친구인 “버전 관리 시스템”을 만나게 되었다. 당시 그 업체에서는 <a href="http://en.wikipedia.org/wiki/Microsoft_Visual_SourceSafe" target="_blank" rel="noopener">Visual Source Safe</a>라는 툴을 사용하고 있었는데, 버전 관리 시스템이라것을 거기서 처음 들은 나는 Source Safe에서 소스 받아가라는 PL의 말을 알아듣지 못 할 수 밖에..</p>
+<p>대학에서 친구 몇 명과 조그만 프로젝트를 개발 할 때는 한명이 프로젝트를 생성하여 큰 틀을 만들고, 각자 역할에 나누어 개발 후 한 사람 PC에 옹기종기 모여 각자 개발 한 모듈을 USB에 담아 취합하는 작업을 했었다. </p>
+<p>시스템이 복잡하면 할 수록 점점 소스를 취합하는것이 힘들어 질 것이다. 그리고 특정 파일을 3일전의 상태로 돌리고 싶다면 어떨까? 매일매일 소스를 백업하여 아래같이 해둔다면 어찌 해 볼 수 있겠지만 그마저도 없다면 오롯이 내 머릿속의 기억에만 의존해야하는 최악의 사태가 벌어 질 수 있다.  </p>
+<ul>
+<li>2015-06-01.zip  </li>
+<li>2015-06-02.zip  </li>
+<li>2015-06-03.zip   </li>
+</ul>
+<p>어떻게 이런 문제들을 해결 할 수 있을까?</p>
+<h2 id="버전-관리-Version-Control-란"><a href="#버전-관리-Version-Control-란" class="headerlink" title="버전 관리(Version Control)란?"></a>버전 관리(Version Control)란?</h2><p>개발자들은 자신의 머리가 그리 똑똑하지 못하는다는것을 오래전에 깨닫고 파일의 변화를 기록하는 시스템을 만들었으니 그게 버전관리 시스템이다.</p>
+<p>아마 처음에는 자신의 컴퓨터에 있는 파일의 버전을 관리해주는 프로그램을 개발 했을 것이다.<br>내가 짠 소스코드의 변화를 시스템이 관리해주니 오늘 수정한 소스가 잘못된 것을 알았을 때 손쉽게 그 이전 버전이나, 특정 날짜에 작성한 버전으로 돌릴 수 있었을 것이다. </p>
+<p>하지만, 소프트웨어는 여럿이 개발하는 경우가 많으므로, 내가 작성한 코드가 다른 사람에게도 보였으면 하는 생각이 들었을 것이고, 내 로컬에 변경사항을 기록하는 것이 아닌, 소스를 관리하는 서버에 변경사항을 기록하고, 각자 서버에서 소스를 받아서 사용할 수 있는 시스템을 만들었다. 그게 현재 사용하는 TFS, Source Safe, SVN, Subversion과 같은 프로그램이고 이것을 중앙 집중형 버전관리 시스템이라고 한다.</p>
+<p>이 프로그램을 사용하면 다음과 같은 장점을 누릴 수 있다.      </p>
+<ul>
+<li>여러명의 개발자가 하나의 프로젝트를 동시에 개발 할 수 있다.</li>
+<li>USB등으로 파일을 copy할 필요 없이 다른 사람이 개발한 소스코드를 내 컴퓨터에 받아 올 수 있다.</li>
+<li>이 파일을 누가 언제 어떻게 수정했는지 이력을 볼 수 있다.</li>
+<li>문제가 생겨 이전 버전으로 돌아가야하는 일이 생겼을 때 손쉽게 돌아 갈 수 있다.</li>
+<li>Branch를 이용하여, 좀 더 안전하게 새 기능을 추가하고 Merge하여 통합 할 수 있다.</li>
+<li>내가 A 기능을 개발하는 중에 급하게 Patch해야 할 버그가 생겼을 때도 잠시 A기능을 개발하지 전 상태로 돌려 버그를 수정하고, 다시 A기능을 개발하던 상태로 돌아 갈 수 있다. </li>
+</ul>
+<p>이렇게 많은 기능을 제공하니, 개발자들은 좀 더 편리하게 개발 할 수 있게 된 것이다. </p>
+<p><img src="https://crynut84.github.io/images/posts/introduction-to-git/centralized-version-control.png" alt="중앙집중형 버전관리 시스템"><br>출처 : <a href="https://homes.cs.washington.edu/~mernst/advice/version-control.html" target="_blank" rel="noopener">https://homes.cs.washington.edu/~mernst/advice/version-control.html</a></p>
+<p>나는 그동안 <a href="https://msdn.microsoft.com/ko-kr/vstudio/ff637362.aspx" target="_blank" rel="noopener">TFS(Team Foundation Server)</a>를 이용하여 버전관리를 했는데 IDE인 Visual Studio와의 통합도 훌륭하기 때문에 큰 불편함 없이 사용해왔다. </p>
+<p>하지만 TFS(중앙 집중형 버전관리 시스템)의 경우 모든 소스를 서버가 관리하기 때문에 다음과 같은 단점이 존재한다.</p>
+<ul>
+<li>네트워크에 연결되어 있어야만 작업이 가능하다.(소스파일의 checkin, checkout시 서버에 접솝해야 한다.)   </li>
+<li>서버에 문제가 생기면 작업을 할 수 없다.   </li>
+<li>서버와의 통신이 지속적으로 이루어지기 때문에 네트워크가 느린경우 작업에도 영향을 미친다.   </li>
+<li>Branch하면 전체 소스를 다른 폴더에 받아오기 때문에 Branch가 많이 부담스러운 작업이다.</li>
+</ul>
+<p>분산 버전 관리 시스템을 사용하면 앞서 말한 문제점을 해결 할 수 있다.</p>
+<h2 id="분산-버전-관리-시스템"><a href="#분산-버전-관리-시스템" class="headerlink" title="분산 버전 관리 시스템"></a>분산 버전 관리 시스템</h2><p>중앙집중형 버전관리 시스템의 저장소(repository)가 server에만 있는것과 달리 분산 버전 관리 시스템에서 저장소는 모든 client가 저장소가 될 수 있다. 이게 무슨 말일까?</p>
+<p>예를들어 TFS에서 get latest version을 통해 저장소에서 project를 가져온가고 생각해 보자. 그럼 저장소에서 사용자의 컴퓨터에 최신의 코드를 받아오게 된다. 분산 버전 관리 시스템의 경우 어떻까? server에서 저장소자체를 통채로 받아오게 된다. 이 말은 소스코드는 물론 그동안의 변경 이력까지 모든 정보를 가져와 로컬 컴퓨터 또한 완전한 저장소가 된다는 뜻이다.</p>
+<p>이렇게 됨으로써 한번 저장소를 받아온 이후에 개발작업에서는 서버와는 별개로 자신의 로컬에서 진행하게 되고, 로컬이니 당연히 빠른 속도로 변경 할 수 있는 것이다. 만약 main.cs 파일의 지난 히스토리와 diff 하고 싶을 경우 TFS는 서버와의 통신을 통해 diff하는 반면 분산 버전 관리 시스템은 로컬에 있는 저장소에서 변경 이력을 찾아 diff해 준다.</p>
+<p>이런 분산 버전 관리 시스템의 개념을 구현한 것이 git, Mercurial등이 있고, 나는 이제는 대새(?)로 자리잡은 git에 대해 설명 하려고한다. git은 리누즈 토발즈가 리눅스 커널의 버전관리를 위해 만들었다고 알려져 있다. </p>
+<h2 id="왜-git으로-바꿔야하나"><a href="#왜-git으로-바꿔야하나" class="headerlink" title="왜 git으로 바꿔야하나?"></a>왜 git으로 바꿔야하나?</h2><p>git은 어렵다. git을 만든 리누즈 토발즈도 한 <a href="http://www.looah.com/article/view/1692" target="_blank" rel="noopener">인터뷰</a>에서 <code>이렇게 쓰기 어려운걸 누가 쓰리라곤 생각도 못했다.</code>고 말했라고 한다. 특히나 CLI보다 GUI가 익숙한 닷넷 개발자는(닷넷개발자가 다 그렇다는 것이 아니다) 인터넷에 있는 git에 대한 사용법을 담은 자료를 보고, <code>버전 관리하는데 머가 이렇게 어려워?</code>라는 생각을 가질 만하다.</p>
+<p>우리 <a href="https://www.yooniqimages.com" target="_blank" rel="noopener">회사</a>에서는 올해 초부터 시작해서 6개월동안 git을 사용하기 시작했는데, 내가 생각하는 장점은 다음과 같다.</p>
+<ul>
+<li>저장소 서버가 느려서 스트레스 받는 일이 줄었다.(우리는 <a href="https://www.visualstudio.com/en-us/products/what-is-visual-studio-online-vs.aspx" target="_blank" rel="noopener">Visual Studio Online</a> 서비스를 이용하고 있는데 서버가 미국에 있다.) </li>
+<li>Branch를 마음껏 할 수 있어, Backlog나 Bug 단위로 Branch를 만들어 개발하고 프로덕트를 release하는 Branch(master)는 clean하게 유지할 수 있다.(git workflow) -&gt; 나는 이것이 git을 사용하는 가장 큰 benefit이라고 생각한다. </li>
+</ul>
+<p>이 외에도 만약 이런 상태라면 git을 쓰자.</p>
+<ul>
+<li>버전관리 시스템을 써본적이 없다. 하지만 이제부터 쓸 예정이다.</li>
+<li>github 서비스를 remote 저장소로 사용 할 예정이다.</li>
+<li>머릿속에 프로젝트에 대한 새로운 아이디어가 넘치는데 중앙의 source 이력을 망가뜨리지 않고 마구 실험해 보고 싶다. </li>
+<li>오픈소스의 컨트리뷰터가 되고 싶을 때(많은 오픈소스가 git으로 진행되거나 전환하고 있다)</li>
+<li>git이 대세라는데 그 이유가 궁금하다.(써보면 안다)</li>
+</ul>
+
+            
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/git/">git</a> <a class="tag tag--primary tag--small t-link" href="/tags/버전관리/">버전관리</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/06/16/install-git/" data-tooltip="git 간단 개념과 설치 방법" aria-label="PREVIOUS: git 간단 개념과 설치 방법">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/06/03/install-nodejs/" data-tooltip="node.js 소개 및 설치" aria-label="NEXT: node.js 소개 및 설치">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://crynut84.github.io/2015/06/10/introduction-to-git/" title="Share on Facebook">
+                    <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://crynut84.github.io/2015/06/10/introduction-to-git/" title="Share on Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://crynut84.github.io/2015/06/10/introduction-to-git/" title="Share on Google+">
+                    <i class="fa fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 Hojin Jun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/06/16/install-git/" data-tooltip="git 간단 개념과 설치 방법" aria-label="PREVIOUS: git 간단 개념과 설치 방법">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/06/03/install-nodejs/" data-tooltip="node.js 소개 및 설치" aria-label="NEXT: node.js 소개 및 설치">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://crynut84.github.io/2015/06/10/introduction-to-git/" title="Share on Facebook">
+                    <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://crynut84.github.io/2015/06/10/introduction-to-git/" title="Share on Twitter">
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://crynut84.github.io/2015/06/10/introduction-to-git/" title="Share on Google+">
+                    <i class="fa fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment-o"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://crynut84.github.io/2015/06/10/introduction-to-git/">
+                    <i class="fa fa-facebook-official" aria-hidden="true"></i><span>Share on Facebook</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://crynut84.github.io/2015/06/10/introduction-to-git/">
+                    <i class="fa fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://crynut84.github.io/2015/06/10/introduction-to-git/">
+                    <i class="fa fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/3b2b21d1b33d50542a9c5642c6b5d64d?s=110" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Hojin Jun</h4>
+        
+            <div id="about-card-bio"></div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>programmer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                seoul
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/jquery.fancybox.js"></script>
+<script src="/assets/js/thumbs.js"></script>
+<script src="/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'https://crynut84.github.io/2015/06/10/introduction-to-git/';
+                 
+                    this.page.identifier = '2015/06/10/introduction-to-git/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'hojinjunblog';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    </body>
+</html>
