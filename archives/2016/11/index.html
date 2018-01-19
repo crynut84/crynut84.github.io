@@ -211,6 +211,86 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
+                        <a class="link-unstyled" href="/2016/11/14/deploy-django-to-ubuntu/">
+                            Utuntu에 Apache와 mod_wdg를 이용하여 django 배포
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" datetime="2016-11-14T09:42:48+09:00">
+	
+		    2016-11-14
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/django/">django</a>
+
+
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <h2 id="소개"><a href="#소개" class="headerlink" title="소개"></a>소개</h2><p>Django는 우리가 웹사이트를 구축하기 쉽도록 도와주는 파워풀한 웹 프레임워크이다. Django는 개발 시 사용할 수 있는 간단한 웹서버를 탑재하고 있어, 로컬에서 코드를 테스트해 볼 수 있다. 그러나 실제 운영 서버에서 사용하거나 더 향상된 보안을 위해서는 웹서버가 필요하다.</p>
+<p>이번 가이드에서는 운영 서버 환경에 Django Virtual 환경을 어떻게 설치/구성하는지 살펴본다. Apache 서버를 이용해 프론트 애플리케이션을 핸들링하고 클라이언트의 요청을 Django app에 보내는 방법을 살펴볼 것이고, 이것은 <code>mod_wsgi</code>라는 Apache 모듈을 이용하여 Django와 Apache와의 커뮤니케이션이 가능하도록 설정할 것이다.</p>
+<h2 id="사전-지식-및-목표"><a href="#사전-지식-및-목표" class="headerlink" title="사전 지식 및 목표"></a>사전 지식 및 목표</h2><p>이 가이드에서는 <code>Ubuntu 14.04</code> 서버를 이용할 것이고 <code>non-root</code> 유저를 사용하여 <code>sudo</code> 권한으로 설정할 것이다. Ubuntu 서버는 Azure나 AWS를 이용해 쉽게 생성 가능하다.<br>우리는 Django를 python 가상환경을 사용하여 설치할것이다. 가상환경은 우리의 프로젝트에 필요한 패키지를 격리된 환경에 설치 할 수 있도록 도와준다.</p>
+<p>Django app을 Apache 인터페이스에 설정하기 위해 <code>mod_wsgi</code>라는 Apache 모듈이 필요하다. </p>
+<h2 id="Ubuntu-repository를-이용한-패키지-설치"><a href="#Ubuntu-repository를-이용한-패키지-설치" class="headerlink" title="Ubuntu repository를 이용한 패키지 설치"></a>Ubuntu repository를 이용한 패키지 설치</h2><p>첫 단계로 우리는 필요한 것들을 Ubuntu repository를 이용해 다운로드하고 설치 할 것이다. Apache web Server, Apache를 Django App과 연결하기 위한<code>mod_wsgi</code> 모듈 그리고 우리 프로젝트에 포함된 python 패키지를 다운로드하기 위한 패키지 매니저인 <code>pip</code>가 필요하다.</p>
+<p>우리는 Python3을 사용하므로 다음 명령어로 설치한다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install python3-pip apache2 libapache2-mod-wsgi-py3</span><br></pre></td></tr></table></figure>
+<p>이 명령어로 Python3 pip, apache2, mod_wsgi 모듈까지 설치 할 수 있다.</p>
+<h2 id="python-가상환경-설정"><a href="#python-가상환경-설정" class="headerlink" title="python 가상환경 설정"></a>python 가상환경 설정</h2><p>Ubuntu 리파지터리를 이용해 필요한 컴포넌트를 설치함으로써 Django 프로젝트를 시작 할 수 있는 준비가 되었다.<br>첫단계로 python 가상환경을 만들어보자. 이렇게 함으로써 우리 프로젝트가 다른 프로젝트나 설정에 영향 받지 않고 독립적인 실행이 가능하게 된다.</p>
+<p>python 가상환경을 생성하기 위한 <code>virtualenv</code> 라는 커맨드를 <code>pip</code>이용하여 설치한다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip3 install virtualenv</span><br></pre></td></tr></table></figure>
+<p><code>virtualenv</code>를 설치했으면 우리 프로젝트를 git repository를 통해 clone 한다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/house142/anchovy.git</span><br></pre></td></tr></table></figure>
+<p>clone 받은 anchovy 디렉터리로 이동하여 가상환경을 만든다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">virtualenv myenv</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">`myenv`는 임의로 정한 가상환경의 이름이다. 이 명령어로인해 anchvy 디렉터리 안에 `myenv`라는 디렉터리가 생성된다. 이 디렉터리안에는 우리가 사용할 python과 pip가 설치된다. 우리는 이것을 이용하여 격리된 python 환경에서 우리 프로젝트를 실행 할 수있다.</span><br><span class="line"></span><br><span class="line">그럼 python 가상환경으로 들어가 보자.</span><br><span class="line">```bash</span><br><span class="line"><span class="built_in">source</span> myenv/bin/activate</span><br></pre></td></tr></table></figure>
+<p>가상환경으로 진입하면 쉘의 앞부분에 가상환경이름이 표시된다.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(myenv) house142@anchovy-web:~/anchovy$</span><br></pre></td></tr></table></figure></p>
+<h2 id="python-패키지-설치"><a href="#python-패키지-설치" class="headerlink" title="python 패키지 설치"></a>python 패키지 설치</h2><p>우리 프로젝트는 requirements.txt 파일에 python 패키지의 종속성이 표기 되어있다.<br>가상환경 내에서 이를 이용하여 패키지를 설치해 보자.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(myenv)$ pip install -r requirements.txt</span><br></pre></td></tr></table></figure></p>
+<p>pip는 <code>requirements.txt</code>에 기록된 패키지를 python 가상환경내에 설치 해 줄 것이다.<br>이를 확인하려면 myenv안의 폴더를 뒤져보면 된다.</p>
+<h2 id="프로젝트-설정-마무리"><a href="#프로젝트-설정-마무리" class="headerlink" title="프로젝트 설정 마무리"></a>프로젝트 설정 마무리</h2><p>개발한 프로젝트를 운영환경(Production)에서 돌리려면 몇가지 설정을 해야한다. 디버깅을 위해 설정했던 기능을 꺼주어야하고, 프로젝트내에 포함된 스테틱 컨텐츠(css, jaavascript, image 등)를 한데모아 통합하는 일, 그리고 디비의 설정을 실제 디비로 바꿔주는 일등이 있다.</p>
+<p>다음의 명령어로 프로젝트의 스테틱 파일을 한데 모을 수 있는데, 저 명령어를 수행하고 나면 settings.py의 STATIC_ROOT 경로로 파일이 모이게 된다.<br>왜 스테틱 파일을 모아야하는지는 다음 설명(<a href="https://github.com/house142/anchovy/wiki/Django%EC%9D%98-%EC%8A%A4%ED%85%8C%ED%8B%B1-%ED%8C%8C%EC%9D%BC" target="_blank" rel="noopener">Django의 스테틱 파일</a>)을 참조한다.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">python manage.py collectstatic</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">프로젝트의 `settings.py`를 열어(vi anchovy/settings.py) DB설정을 실서버로 변경한다. (이부분은 향후 자동화하는 방법이 필요하다.)</span><br><span class="line"></span><br><span class="line">```javascript</span><br><span class="line">DATABASES = &#123;</span><br><span class="line">        <span class="string">'default'</span>: &#123;</span><br><span class="line">                <span class="string">'ENGINE'</span>: <span class="string">'django.db.backends.mysql'</span>,</span><br><span class="line">                <span class="string">'NAME'</span>: <span class="string">'anchovy'</span>,</span><br><span class="line">                <span class="string">'USER'</span>: <span class="string">'anchovy'</span>,</span><br><span class="line">                <span class="string">'PASSWORD'</span>: <span class="string">'house142!234'</span>,</span><br><span class="line">                <span class="string">'HOST'</span>: <span class="string">'anchovy.cloudapp.net'</span>,</span><br><span class="line">                <span class="string">'PORT'</span>: <span class="string">'3306'</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>그리고 pip를 통해 mysql에 접속하는 python 모듈인 <code>mysqlclient</code>를 설치한다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install mysqlclient</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>이 경우 Azure Ubuntu에서 <code>mysql_config: not found</code> 오류가 발생한다<br>sudo apt-get install libmysqlclient-dev을 먼저 설치 후 다시 mysqlclient를 설치하면 된다.</p>
+</blockquote>
+<p>DEBUG 모드가 아니므로 DEBUG 속성을 False로 수정하고, 모든 클라이언트 요청을 처리하기위해 <code>settings.py</code>의 <code>ALLOWED_HOSTS</code>  속성을  수정한다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DEBUG = False</span><br><span class="line">ALLOWED_HOSTS = [<span class="string">'*'</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="Apache-설정"><a href="#Apache-설정" class="headerlink" title="Apache 설정"></a>Apache 설정</h3><p>우리 Django 프로젝트를 Apache와 연결시키는 방법을 알아보자. Apache는 클라이언트의 요청을 WSGI 포맷으로 변경하여 Django 어플리케이션으로 전달해야하는데 이 작업을 <code>mod_wsgi</code> 모듈이 담당한다. 이 설정은 아까 설치할때 이미 활성화되어있다.<br>위 경로의 apache 설정을 수정한다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/apache2/sites-available/000-default.conf</span><br></pre></td></tr></table></figure>
+<p><img src="https://cloud.githubusercontent.com/assets/5028400/20252478/f2178cda-aa65-11e6-9c2d-53f904fefe96.png" alt="image"></p>
+<p>우선 static file의 경로 설정을 한다. 그 다음 wsgi 경로 설정. 그 후 python 경로설정과 virtual 환경 설정을 한다.</p>
+<h2 id="ref"><a href="#ref" class="headerlink" title="ref."></a>ref.</h2><p><a href="https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-apache-and-mod_wsgi-on-ubuntu-14-04" target="_blank" rel="noopener">https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-apache-and-mod_wsgi-on-ubuntu-14-04</a></p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2016/11/14/deploy-django-to-ubuntu/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
                         <a class="link-unstyled" href="/2016/11/14/django-static-file/">
                             django static에 대해 알아보자
                         </a>
